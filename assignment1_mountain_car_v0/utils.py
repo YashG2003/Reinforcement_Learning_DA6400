@@ -1,6 +1,5 @@
 import numpy as np 
 import gymnasium as gym
-np.random.seed(0)
 
 class Mountain_Car_SARSA_Agent:
     
