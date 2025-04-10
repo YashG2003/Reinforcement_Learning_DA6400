@@ -21,12 +21,11 @@ import gymnasium as gym
 import numpy as np 
 import matplotlib.pyplot as plt
 import wandb
-from duel_dqn import Agent_DDQN, train_dueling_dqn
+from mc_reinforce import train_reinforce
 
-    
 sweep_config = {
     
-    'name' : 'DDQN_Acrobot_Type2',
+    'name' : 'MC_Reinforce_without_baseline_Acrobot',
     
     "method": "bayes",  # Bayesian Optimization
     "metric": 
@@ -36,18 +35,14 @@ sweep_config = {
     "parameters": {
         
         "lr": {"distribution": "uniform", "min": 1e-4, "max": 1e-2},
-        "epsilon": {"distribution": "uniform", "min": 0.1, "max": 1.0},
-        "epsilon_decay": {"distribution": "uniform", "min": 0.99, "max": 0.9999},
-        "min_epsilon": {"distribution": "uniform", "min": 0.01, "max": 0.1}
+        
+        "hidden_size": {
+            "values": [64, 128, 256]
     }
+}
 }
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 64         # minibatch size
-GAMMA = 0.99            # discount factor
-UPDATE_EVERY = 20       # how often to update the network (When Q target is present)
 
 
 def main():
@@ -56,26 +51,20 @@ def main():
     
     config = wandb.config 
     
-    run_name = f"RL_type2_sweep_1_lr-{config.lr:0.4f}_eps-{config.epsilon:0.4f}_epsdec-{config.epsilon_decay:0.4f}_mineps-{config.min_epsilon:0.4f}"
+    run_name = f"RL_sweep_without_baseline_lr-{config.lr:0.4f}_hs_{config.hidden_size}"
 
     wandb.run.name = run_name
     wandb.run.save()
     
     # Defining the env
     env = gym.make('Acrobot-v1')
-    state_shape = env.observation_space.shape[0]
-    action_shape = env.action_space.n
     
     # Hyperparameters
     episodes = 1000
+    gamma = 0.99
     lr = config.lr
-    epsilon = config.epsilon
-    epsilon_decay = config.epsilon_decay
-    min_epsilon = config.min_epsilon
+    hidden_size = config.hidden_size
     
-    # Update type 2
-    update_type = 'max'
-
     all_episodic_rewards = []
     all_episodic_regrets = []
     
@@ -83,10 +72,7 @@ def main():
     
     for run in range(no_runs):
         
-        agent_DDQN = Agent_DDQN(state_shape,action_shape, update_type,
-                                device,lr,BUFFER_SIZE,BATCH_SIZE,GAMMA,UPDATE_EVERY)
-        
-        episodic_rewards, episodic_regrets = train_dueling_dqn(run,env,agent_DDQN,episodes, epsilon, min_epsilon, epsilon_decay)
+        episodic_rewards, episodic_regrets = train_reinforce(env, run, episodes, gamma, lr, hidden_size,device)
             
         all_episodic_rewards.append(episodic_rewards)
         all_episodic_regrets.append(episodic_regrets) 
@@ -116,5 +102,4 @@ if __name__ == "__main__":
     
     sweep_id = wandb.sweep(sweep_config, project="rl_a2",entity="da6400_rl")
     wandb.agent(sweep_id, function=main, count= 30)
-
 

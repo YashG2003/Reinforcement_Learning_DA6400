@@ -35,7 +35,7 @@ sweep_config = {
         
     "parameters": {
         
-        "lr": {"distribution": "uniform", "min": 0.01, "max": 0.5},
+        "lr": {"distribution": "uniform", "min": 1e-4, "max": 1e-2},
         "epsilon": {"distribution": "uniform", "min": 0.1, "max": 1.0},
         "epsilon_decay": {"distribution": "uniform", "min": 0.99, "max": 0.9999},
         "min_epsilon": {"distribution": "uniform", "min": 0.01, "max": 0.1}
@@ -56,7 +56,7 @@ def main():
     
     config = wandb.config 
     
-    run_name = f"RL_sweep_1_alpha-{config.lr:0.4f}_eps-{config.epsilon:0.4f}_epsdec-{config.epsilon_decay:0.4f}_mineps-{config.min_epsilon:0.4f}"
+    run_name = f"RL_type1_sweep_1_lr-{config.lr:0.4f}_eps-{config.epsilon:0.4f}_epsdec-{config.epsilon_decay:0.4f}_mineps-{config.min_epsilon:0.4f}"
 
     wandb.run.name = run_name
     wandb.run.save()

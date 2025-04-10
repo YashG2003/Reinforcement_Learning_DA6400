@@ -214,13 +214,13 @@ def train_dueling_dqn(run,env, agent, episodes=10000, eps_start=1.0, eps_end=0.0
         while not done: 
                        
             action = agent.act(state, eps)
-            next_state, reward, terminated, truncated, info = env.step(action)
-            
-            # Update the agent
-            agent.step(state, action, reward, next_state, done)
+            next_state, reward, terminated, truncated, _ = env.step(action)
             
             # update if the environment is done and the current state
             done = terminated or truncated
+            
+            # Update the agent
+            agent.step(state, action, reward, next_state, done)
             
             state = next_state
             
