@@ -1,0 +1,9 @@
+numpy
+matplotlib
+gymnasium
+pyvirtualdisplay
+tensorflow
+tensorflow-probability
+Pillow
+ipython
+torch
