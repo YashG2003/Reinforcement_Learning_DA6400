@@ -1,0 +1,16 @@
+{"time":"2025-04-10T17:03:06.5611608+05:30","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"D:\\IITM academics and courses\\IITM courses\\RL\\PA_1\\Reinforcement_Learning_DA6400\\assignment_2\\acrobot-v1\\wandb\\run-20250410_170306-ggtr3evl\\logs\\debug-core.log"}
+{"time":"2025-04-10T17:03:06.6916979+05:30","level":"INFO","msg":"created new stream","id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:06.6919547+05:30","level":"INFO","msg":"stream: started","id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:06.6919547+05:30","level":"INFO","msg":"writer: Do: started","stream_id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:06.6919547+05:30","level":"INFO","msg":"handler: started","stream_id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:06.6919547+05:30","level":"INFO","msg":"sender: started","stream_id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:07.1204926+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-04-10T17:03:07.255419+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-04-10T17:03:07.2570724+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-04-10T17:03:08.2713493+05:30","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"creating run","runtime_seconds":0.3298779}],"total_operations":1}}
+{"time":"2025-04-10T17:03:09.2658962+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-04-10T17:03:09.6016113+05:30","level":"INFO","msg":"stream: closing","id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:09.6016113+05:30","level":"INFO","msg":"handler: closed","stream_id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:09.6016113+05:30","level":"INFO","msg":"sender: closed","stream_id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:09.6016113+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":"ggtr3evl"}
+{"time":"2025-04-10T17:03:09.6022051+05:30","level":"INFO","msg":"stream: closed","id":"ggtr3evl"}

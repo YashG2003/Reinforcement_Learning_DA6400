@@ -1,0 +1,7 @@
+{"time":"2025-04-10T17:08:23.6129057+05:30","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"D:\\IITM academics and courses\\IITM courses\\RL\\PA_1\\Reinforcement_Learning_DA6400\\assignment_2\\acrobot-v1\\wandb\\offline-run-20250410_170823-atg5kpkh\\logs\\debug-core.log"}
+{"time":"2025-04-10T17:08:23.7305287+05:30","level":"INFO","msg":"created new stream","id":"atg5kpkh"}
+{"time":"2025-04-10T17:08:23.7306494+05:30","level":"INFO","msg":"stream: started","id":"atg5kpkh"}
+{"time":"2025-04-10T17:08:23.7307861+05:30","level":"INFO","msg":"writer: Do: started","stream_id":"atg5kpkh"}
+{"time":"2025-04-10T17:08:23.7307861+05:30","level":"INFO","msg":"handler: started","stream_id":"atg5kpkh"}
+{"time":"2025-04-10T17:08:23.7307861+05:30","level":"INFO","msg":"sender: started","stream_id":"atg5kpkh"}
+{"time":"2025-04-10T17:08:23.7428468+05:30","level":"INFO","msg":"Starting system monitor"}

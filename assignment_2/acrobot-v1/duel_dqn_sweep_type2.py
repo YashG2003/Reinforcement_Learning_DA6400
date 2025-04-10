@@ -12,10 +12,8 @@ import io
 import base64
 from IPython.display import HTML
 from pyvirtualdisplay import Display
-import tensorflow as tf
 from IPython import display as ipythondisplay
 from PIL import Image
-import tensorflow_probability as tfp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -23,15 +21,12 @@ import gymnasium as gym
 import numpy as np 
 import matplotlib.pyplot as plt
 import wandb
-from ddqn import Agent_DDQN, train_dueling_dqn
+from duel_dqn import Agent_DDQN, train_dueling_dqn
 
-
-seed = 42
-np.random.seed(42)
     
 sweep_config = {
     
-    'name' : 'DDQN_Acrobot',
+    'name' : 'DDQN_Acrobot_Type1',
     
     "method": "bayes",  # Bayesian Optimization
     "metric": 
@@ -48,6 +43,7 @@ sweep_config = {
 }
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 BUFFER_SIZE = int(1e5)  # replay buffer size
 BATCH_SIZE = 64         # minibatch size
 GAMMA = 0.99            # discount factor
@@ -56,7 +52,7 @@ UPDATE_EVERY = 20       # how often to update the network (When Q target is pres
 
 def main():
     
-    wandb.init(project="rl_a1",entity="da6400_rl")
+    wandb.init(project="rl_a2",entity="da6400_rl")
     
     config = wandb.config 
     
@@ -66,19 +62,19 @@ def main():
     wandb.run.save()
     
     # Defining the env
-    env = gym.make('Acrobot-v1', render_mode="rgb_array")
+    env = gym.make('Acrobot-v1')
     state_shape = env.observation_space.shape[0]
     action_shape = env.action_space.n
     
     # Hyperparameters
-    episodes = 10000
+    episodes = 1000
     lr = config.lr
     epsilon = config.epsilon
     epsilon_decay = config.epsilon_decay
     min_epsilon = config.min_epsilon
     
     # Update type 1
-    update_type = 'avg'
+    update_type = 'max'
 
     all_episodic_rewards = []
     all_episodic_regrets = []
@@ -87,7 +83,7 @@ def main():
     
     for run in range(no_runs):
         
-        agent_DDQN = Agent_DDQN(state_shape,action_shape, update_type, seed,
+        agent_DDQN = Agent_DDQN(state_shape,action_shape, update_type,
                                 device,lr,BUFFER_SIZE,BATCH_SIZE,GAMMA,UPDATE_EVERY)
         
         episodic_rewards, episodic_regrets = train_dueling_dqn(run,env,agent_DDQN,episodes, epsilon, min_epsilon, epsilon_decay)
@@ -118,7 +114,7 @@ def main():
     
 if __name__ == "__main__":
     
-    sweep_id = wandb.sweep(sweep_config, project="rl_a1",entity="da6400_rl")
+    sweep_id = wandb.sweep(sweep_config, project="rl_a2",entity="da6400_rl")
     wandb.agent(sweep_id, function=main, count= 30)
 
 

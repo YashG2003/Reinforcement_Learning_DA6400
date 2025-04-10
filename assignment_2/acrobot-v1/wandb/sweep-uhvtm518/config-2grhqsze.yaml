@@ -1,0 +1,10 @@
+wandb_version: 1
+
+epsilon:
+  value: 0.5598897973592356
+epsilon_decay:
+  value: 0.993285094001336
+lr:
+  value: 0.3683566031497375
+min_epsilon:
+  value: 0.06559559735645908

@@ -1,0 +1,31 @@
+{
+  "os":  "Windows-10-10.0.22631-SP0",
+  "python":  "CPython 3.11.4",
+  "startedAt":  "2025-04-10T11:32:44.536612Z",
+  "program":  "D:\\IITM academics and courses\\IITM courses\\RL\\PA_1\\Reinforcement_Learning_DA6400\\assignment_2\\acrobot-v1\\ddqn_sweep.py",
+  "codePath":  "assignment_2\\acrobot-v1\\ddqn_sweep.py",
+  "git":  {
+    "remote":  "https://github.com/YashG2003/Reinforcement_Learning_DA6400.git",
+    "commit":  "e79c005da2136d2397fa65ad881f0052efd8dcd2"
+  },
+  "email":  "ch21b033@smail.iitm.ac.in",
+  "root":  "D:\\IITM academics and courses\\IITM courses\\RL\\PA_1\\Reinforcement_Learning_DA6400\\assignment_2\\acrobot-v1",
+  "host":  "DESKTOP-O9VF106",
+  "executable":  "D:\\IITM academics and courses\\IITM courses\\RL\\PA_1\\myenv\\Scripts\\python.exe",
+  "codePathLocal":  "ddqn_sweep.py",
+  "cpu_count":  10,
+  "cpu_count_logical":  12,
+  "disk":  {
+    "/":  {
+      "total":  "268434403328",
+      "used":  "251909021696"
+    }
+  },
+  "memory":  {
+    "total":  "16849293312"
+  },
+  "cpu":  {
+    "count":  10,
+    "countLogical":  12
+  }
+}

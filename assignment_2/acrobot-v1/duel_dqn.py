@@ -14,10 +14,8 @@ import base64
 import matplotlib.pyplot as plt
 from IPython.display import HTML
 from pyvirtualdisplay import Display
-import tensorflow as tf
 from IPython import display as ipythondisplay
 from PIL import Image
-import tensorflow_probability as tfp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -25,7 +23,7 @@ import torch.nn.functional as F
 
 class QNetwork1(nn.Module):
 
-    def __init__(self, state_size, action_size, update_type, seed, fc1_units=128, fc2_units=64):
+    def __init__(self, state_size, action_size, update_type, fc1_units=128, fc2_units=64):
         """Initialize parameters and build model.
         Params
         ======
@@ -36,7 +34,6 @@ class QNetwork1(nn.Module):
             fc2_units (int): Number of nodes in second hidden layer
         """
         super(QNetwork1, self).__init__()
-        self.seed = torch.manual_seed(seed)
         
         self.type = update_type
         
@@ -58,18 +55,20 @@ class QNetwork1(nn.Module):
         value  = F.relu(self.value_fc(x))
         advantage = F.relu(self.advantage_fc(x))
         
+        # Type 1 update rule
         if self.type == 'avg':
-          q_values =  value + (advantage - torch.mean(advantage, dim=1, keepdim=True))
+            q_values =  value + (advantage - torch.mean(advantage, dim=1, keepdim=True))
           
-        else:
-          q_values =  value + (advantage - torch.max(advantage, dim=1, keepdim=True))
+        # Type 2 update rule
+        elif self.type == 'max':
+            q_values =  value + (advantage - torch.max(advantage, dim=1, keepdim=True)[0])
         
         return q_values
     
 class ReplayBuffer:
     """Fixed-size buffer to store experience tuples."""
 
-    def __init__(self, action_size, buffer_size, batch_size, seed):
+    def __init__(self, action_size, buffer_size, batch_size, device):
         """Initialize a ReplayBuffer object.
 
         Params
@@ -83,7 +82,7 @@ class ReplayBuffer:
         self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
         self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
-        self.seed = random.seed(seed)
+        self.device = device
 
     def add(self, state, action, reward, next_state, done):
         """Add a new experience to memory."""
@@ -94,11 +93,11 @@ class ReplayBuffer:
         """Randomly sample a batch of experiences from memory."""
         experiences = random.sample(self.memory, k=self.batch_size)
 
-        states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(device)
-        actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long().to(device)
-        rewards = torch.from_numpy(np.vstack([e.reward for e in experiences if e is not None])).float().to(device)
-        next_states = torch.from_numpy(np.vstack([e.next_state for e in experiences if e is not None])).float().to(device)
-        dones = torch.from_numpy(np.vstack([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(device)
+        states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(self.device)
+        actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long().to(self.device)
+        rewards = torch.from_numpy(np.vstack([e.reward for e in experiences if e is not None])).float().to(self.device)
+        next_states = torch.from_numpy(np.vstack([e.next_state for e in experiences if e is not None])).float().to(self.device)
+        dones = torch.from_numpy(np.vstack([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(self.device)
 
         return (states, actions, rewards, next_states, dones)
 
@@ -110,12 +109,11 @@ class ReplayBuffer:
     
 class Agent_DDQN():
 
-    def __init__(self, state_size, action_size,update_type, seed,device,lr,BUFFER_SIZE,BATCH_SIZE,GAMMA,UPDATE_EVERY):
+    def __init__(self, state_size, action_size,update_type,device,lr,BUFFER_SIZE,BATCH_SIZE,GAMMA,UPDATE_EVERY):
 
         ''' Agent Environment Interaction '''
         self.state_size = state_size
         self.action_size = action_size
-        self.seed = random.seed(seed)
         self.device = device
         self.lr = lr
         self.buffer_size = BUFFER_SIZE
@@ -125,12 +123,12 @@ class Agent_DDQN():
         self.type = update_type
 
         ''' Q-Network '''
-        self.qnetwork_local = QNetwork1(state_size, action_size,self.type, seed).to(self.device)
-        self.qnetwork_target = QNetwork1(state_size, action_size,self.type, seed).to(self.device)
+        self.qnetwork_local = QNetwork1(state_size, action_size,self.type).to(self.device)
+        self.qnetwork_target = QNetwork1(state_size, action_size,self.type).to(self.device)
         self.optimizer = optim.Adam(self.qnetwork_local.parameters(), lr= self.lr)
 
         ''' Replay memory '''
-        self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
+        self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE,self.device)
 
         ''' Initialize time step (for updating every UPDATE_EVERY steps)           -Needed for Q Targets '''
         self.t_step = 0
@@ -197,7 +195,7 @@ class Agent_DDQN():
 ''' Defining DQN Algorithm '''
 
 
-def train_dueling_dqn(run,env,agent,episodes=10000, eps_start=1.0, eps_end=0.01, eps_decay=0.995):
+def train_dueling_dqn(run,env, agent, episodes=10000, eps_start=1.0, eps_end=0.01, eps_decay=0.995):
 
     episodic_rewards = []
     episodic_regrets =  []
@@ -235,7 +233,7 @@ def train_dueling_dqn(run,env,agent,episodes=10000, eps_start=1.0, eps_end=0.01,
         ''' decrease epsilon '''
 
         # Print progress every 100 episodes
-        if (episode+1) % 100 == 0:
+        if (episode+1) % 1 == 0:
             print(f"Run : {run+1}, Episode {episode + 1}/{episodes}, Episodic reward: {reward_per_episode:.4f}")
         
         regret_per_episode = optimal_return_per_episode - reward_per_episode

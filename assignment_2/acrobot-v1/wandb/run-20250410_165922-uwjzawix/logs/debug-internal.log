@@ -1,0 +1,16 @@
+{"time":"2025-04-10T16:59:22.5290314+05:30","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"D:\\IITM academics and courses\\IITM courses\\RL\\PA_1\\Reinforcement_Learning_DA6400\\assignment_2\\acrobot-v1\\wandb\\run-20250410_165922-uwjzawix\\logs\\debug-core.log"}
+{"time":"2025-04-10T16:59:22.669578+05:30","level":"INFO","msg":"created new stream","id":"uwjzawix"}
+{"time":"2025-04-10T16:59:22.6697515+05:30","level":"INFO","msg":"stream: started","id":"uwjzawix"}
+{"time":"2025-04-10T16:59:22.6699074+05:30","level":"INFO","msg":"writer: Do: started","stream_id":"uwjzawix"}
+{"time":"2025-04-10T16:59:22.6699074+05:30","level":"INFO","msg":"handler: started","stream_id":"uwjzawix"}
+{"time":"2025-04-10T16:59:22.6699074+05:30","level":"INFO","msg":"sender: started","stream_id":"uwjzawix"}
+{"time":"2025-04-10T16:59:23.078743+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-04-10T16:59:23.1946003+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-04-10T16:59:23.1954882+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-04-10T16:59:24.2036679+05:30","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading wandb-metadata.json","runtime_seconds":0.8063262,"progress":"1.0KB/1.0KB"},{"desc":"uploading requirements.txt","runtime_seconds":0.7323385,"progress":"1.6KB/1.6KB"},{"desc":"uploading summary","runtime_seconds":0.0934871},{"desc":"updating run config","runtime_seconds":0.0926514}],"total_operations":4}}
+{"time":"2025-04-10T16:59:25.8232535+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-04-10T16:59:26.1567486+05:30","level":"INFO","msg":"stream: closing","id":"uwjzawix"}
+{"time":"2025-04-10T16:59:26.1567486+05:30","level":"INFO","msg":"handler: closed","stream_id":"uwjzawix"}
+{"time":"2025-04-10T16:59:26.1567486+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":"uwjzawix"}
+{"time":"2025-04-10T16:59:26.1567486+05:30","level":"INFO","msg":"sender: closed","stream_id":"uwjzawix"}
+{"time":"2025-04-10T16:59:26.1573464+05:30","level":"INFO","msg":"stream: closed","id":"uwjzawix"}
