@@ -25,9 +25,9 @@ from mc_reinforce import train_reinforce_with_baseline
 
 sweep_config = {
     
-    'name' : 'MC_Reinforce_with_baseline_Acrobot',
+    'name' : 'MC_RF_with_bl_Acrobot_Higher',
     
-    "method": "bayes",  # Bayesian Optimization
+    "method": "grid",  # Bayesian Optimization
     
     "metric": 
         {"name": "Final_Cumulative_Regret", 
@@ -35,15 +35,11 @@ sweep_config = {
         
     "parameters": {
         
-        "policy_lr": {"distribution": "uniform", "min": 1e-5, "max": 1e-3},
-        "value_lr" : {"distribution": "uniform", "min": 1e-3, "max": 1e-2},
+        "lr": {'values': [0.005,0.004,0.008,0.006]},
         
-        "hidden_size_policy": {
-            "values": [64, 128, 256]
+        "hidden_size": {
+            "values": [64,128]
     },  
-        "hidden_size_value": {
-            "values": [64, 128, 256]
-    }
 }
     
 }
@@ -57,7 +53,7 @@ def main():
     
     config = wandb.config 
     
-    run_name = f"RL_sweep_with_baseline_plr-{config.policy_lr:0.4f}_vlr_{config.value_lr:0.4f}_phs_{config.hidden_size_policy}_vhs_{config.hidden_size_value}"
+    run_name = f"RL_sweep_1_with_baseline_lr-{config.lr:0.4f}_hs_{config.hidden_size}"
 
     wandb.run.name = run_name
     wandb.run.save()
@@ -69,10 +65,8 @@ def main():
     episodes = 1000
     gamma = 0.99
     
-    policy_lr = config.policy_lr
-    value_lr = config.value_lr
-    hidden_size_policy = config.hidden_size_policy
-    hidden_size_value = config.hidden_size_value
+    lr = config.lr
+    hidden_size = config.hidden_size
     
     all_episodic_rewards = []
     all_episodic_regrets = []
@@ -81,9 +75,8 @@ def main():
     
     for run in range(no_runs):
         
-        episodic_rewards, episodic_regrets = train_reinforce_with_baseline(env,run,
-                                            episodes, gamma, policy_lr,value_lr,
-                                         hidden_size_policy, hidden_size_value,device)
+        episodic_rewards, episodic_regrets = train_reinforce_with_baseline(env, run, episodes, 
+                                                    gamma, lr, hidden_size, device,seed=42)
             
         all_episodic_rewards.append(episodic_rewards)
         all_episodic_regrets.append(episodic_regrets) 
@@ -112,5 +105,5 @@ def main():
 if __name__ == "__main__":
     
     sweep_id = wandb.sweep(sweep_config, project="rl_a2",entity="da6400_rl")
-    wandb.agent(sweep_id, function=main, count= 30)
+    wandb.agent(sweep_id, function=main, count = 8)
 

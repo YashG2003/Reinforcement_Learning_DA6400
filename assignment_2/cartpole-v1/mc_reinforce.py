@@ -61,7 +61,7 @@ def train_reinforce(env, run, episodes, gamma, lr, hidden_size, device,seed=None
     episodic_rewards = []
     episodic_regrets = []
 
-    optimal_return_per_episode = -100  # Adjust based on env
+    optimal_return_per_episode = 500  # Adjust based on env
 
     for episode in range(episodes):
         try:
@@ -131,7 +131,7 @@ def train_reinforce_with_baseline(env, run, episodes, gamma, lr,
     episodic_rewards = []
     episodic_regrets = []
 
-    optimal_return_per_episode = -100  # Update this based on the true optimal return of your env
+    optimal_return_per_episode = 500  # Update this based on the true optimal return of your env
 
     for episode in range(episodes):
         try:

@@ -21,25 +21,27 @@ import gymnasium as gym
 import numpy as np 
 import matplotlib.pyplot as plt
 import wandb
-from mc_reinforce import train_reinforce
+from mc_reinforce import train_reinforce_with_baseline
 
 sweep_config = {
     
-    'name' : 'MC_Reinforce_without_baseline_Acrobot',
+    'name' : 'MC_RF_with_bl_Cartpole_Higher',
     
-    "method": "bayes",  # Bayesian Optimization
+    "method": "grid",  # Bayesian Optimization
+    
     "metric": 
         {"name": "Final_Cumulative_Regret", 
          "goal": "minimize"},  # Optimize final score
         
     "parameters": {
         
-        "lr": {"distribution": "uniform", "min": 1e-4, "max": 1e-2},
+        "lr": {'values': [0.01, 0.005,0.004,0.008,0.006]},
         
         "hidden_size": {
-            "values": [64, 128, 256]
-    }
+            "values": [64,128]
+    },  
 }
+    
 }
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -51,17 +53,18 @@ def main():
     
     config = wandb.config 
     
-    run_name = f"RL_sweep_1_without_baseline_lr-{config.lr:0.4f}_hs_{config.hidden_size}"
+    run_name = f"RL_sweep_1_with_baseline_lr-{config.lr:0.4f}_hs_{config.hidden_size}"
 
     wandb.run.name = run_name
     wandb.run.save()
     
     # Defining the env
-    env = gym.make('Acrobot-v1')
+    env = gym.make('CartPole-v1', render_mode="rgb_array")
     
     # Hyperparameters
     episodes = 1000
     gamma = 0.99
+    
     lr = config.lr
     hidden_size = config.hidden_size
     
@@ -72,7 +75,8 @@ def main():
     
     for run in range(no_runs):
         
-        episodic_rewards, episodic_regrets = train_reinforce(env, run, episodes, gamma, lr, hidden_size,device,seed=42)
+        episodic_rewards, episodic_regrets = train_reinforce_with_baseline(env, run, episodes, 
+                                                    gamma, lr, hidden_size, device,seed=42)
             
         all_episodic_rewards.append(episodic_rewards)
         all_episodic_regrets.append(episodic_regrets) 
@@ -85,8 +89,8 @@ def main():
             
         wandb.log({
             'Episodes':episode,
-            'Episodic_Return': mean_rewards[episode],
-            'Mean_Episodic_Return' : np.mean(mean_rewards[max(0, episode-100):episode+1]), # Averaging over the past 100 episodes
+            'Episodic_Reward': mean_rewards[episode],
+            'Mean_Episodic_Reward' : np.mean(mean_rewards[max(0, episode-100):episode+1]), # Averaging over the past 100 episodes
             'Regret' : mean_regrets[episode],
             'Cumulative_Regret' : np.sum(mean_regrets[:episode+1]),
         })
@@ -101,5 +105,5 @@ def main():
 if __name__ == "__main__":
     
     sweep_id = wandb.sweep(sweep_config, project="rl_a2",entity="da6400_rl")
-    wandb.agent(sweep_id, function=main, count= 20)
+    wandb.agent(sweep_id, function=main, count = 10)
 

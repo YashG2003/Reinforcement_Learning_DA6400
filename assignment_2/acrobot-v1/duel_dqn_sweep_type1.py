@@ -35,17 +35,16 @@ sweep_config = {
         
     "parameters": {
         
-        "lr": {"distribution": "uniform", "min": 1e-4, "max": 1e-2},
-        "epsilon": {"distribution": "uniform", "min": 0.1, "max": 1.0},
+        "lr": {"distribution": "uniform", "min": 1e-5, "max": 1e-2},
         "epsilon_decay": {"distribution": "uniform", "min": 0.99, "max": 0.9999},
-        "min_epsilon": {"distribution": "uniform", "min": 0.01, "max": 0.1}
+        "min_epsilon": {"distribution": "uniform", "min": 0.001, "max": 0.01}
     }
 }
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 64         # minibatch size
+BATCH_SIZE = 128         # minibatch size
 GAMMA = 0.99            # discount factor
 UPDATE_EVERY = 20       # how often to update the network (When Q target is present)
 
@@ -56,7 +55,7 @@ def main():
     
     config = wandb.config 
     
-    run_name = f"RL_type1_sweep_1_lr-{config.lr:0.4f}_eps-{config.epsilon:0.4f}_epsdec-{config.epsilon_decay:0.4f}_mineps-{config.min_epsilon:0.4f}"
+    run_name = f"RL_type1_sweep_1_lr-{config.lr:0.4f}_epsdec-{config.epsilon_decay:0.4f}_mineps-{config.min_epsilon:0.4f}"
 
     wandb.run.name = run_name
     wandb.run.save()
@@ -68,8 +67,8 @@ def main():
     
     # Hyperparameters
     episodes = 1000
+    epsilon = 1.0
     lr = config.lr
-    epsilon = config.epsilon
     epsilon_decay = config.epsilon_decay
     min_epsilon = config.min_epsilon
     

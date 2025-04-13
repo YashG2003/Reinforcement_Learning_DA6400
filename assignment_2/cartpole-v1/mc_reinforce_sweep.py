@@ -24,8 +24,8 @@ import wandb
 from mc_reinforce import train_reinforce
 
 sweep_config = {
-    
-    'name' : 'MC_Reinforce_without_baseline_Acrobot',
+
+    'name' : 'MC_Reinforce_without_baseline_Cartpole',
     
     "method": "bayes",  # Bayesian Optimization
     "metric": 
@@ -57,7 +57,7 @@ def main():
     wandb.run.save()
     
     # Defining the env
-    env = gym.make('Acrobot-v1')
+    env = gym.make('CartPole-v1')
     
     # Hyperparameters
     episodes = 1000
