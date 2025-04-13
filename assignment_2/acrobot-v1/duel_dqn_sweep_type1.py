@@ -26,7 +26,7 @@ from duel_dqn import Agent_DDQN, train_dueling_dqn
     
 sweep_config = {
     
-    'name' : 'DDQN_Acrobot_Type1',
+    'name' : 'DDQN_Acrobot_Type1_No_Relu',
     
     "method": "bayes",  # Bayesian Optimization
     "metric": 
@@ -35,16 +35,16 @@ sweep_config = {
         
     "parameters": {
         
-        "lr": {"distribution": "uniform", "min": 1e-5, "max": 1e-2},
-        "epsilon_decay": {"distribution": "uniform", "min": 0.99, "max": 0.9999},
+        "lr": {'values': [0.001, 0.003,0.0001,0.0003]},
+        "epsilon_decay": {"distribution": "uniform", "min": 0.99, "max": 0.999},
         "min_epsilon": {"distribution": "uniform", "min": 0.001, "max": 0.01}
     }
 }
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
 
 BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 128         # minibatch size
+BATCH_SIZE = 64         # minibatch size
 GAMMA = 0.99            # discount factor
 UPDATE_EVERY = 20       # how often to update the network (When Q target is present)
 
@@ -55,7 +55,7 @@ def main():
     
     config = wandb.config 
     
-    run_name = f"RL_type1_sweep_1_lr-{config.lr:0.4f}_epsdec-{config.epsilon_decay:0.4f}_mineps-{config.min_epsilon:0.4f}"
+    run_name = f"RL_type1_sweep_2_lr-{config.lr:0.4f}_epsdec-{config.epsilon_decay:0.4f}_mineps-{config.min_epsilon:0.4f}"
 
     wandb.run.name = run_name
     wandb.run.save()
@@ -68,6 +68,8 @@ def main():
     # Hyperparameters
     episodes = 1000
     epsilon = 1.0
+    
+    # Configuration parameters
     lr = config.lr
     epsilon_decay = config.epsilon_decay
     min_epsilon = config.min_epsilon
@@ -114,6 +116,6 @@ def main():
 if __name__ == "__main__":
     
     sweep_id = wandb.sweep(sweep_config, project="rl_a2",entity="da6400_rl")
-    wandb.agent(sweep_id, function=main, count= 30)
+    wandb.agent(sweep_id, function=main, count= 20)
 
 

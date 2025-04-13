@@ -52,8 +52,8 @@ class QNetwork1(nn.Module):
         """Build a network that maps state -> action values."""
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
-        value  = F.relu(self.value_fc(x))
-        advantage = F.relu(self.advantage_fc(x))
+        value  = (self.value_fc(x))
+        advantage = (self.advantage_fc(x))
         
         # Type 1 update rule
         if self.type == 'avg':
@@ -184,10 +184,10 @@ class Agent_DDQN():
         self.optimizer.zero_grad()
         loss.backward()
 
-        ''' Gradiant Clipping '''
-        """ +T TRUNCATION PRESENT """
-        for param in self.qnetwork_local.parameters():
-            param.grad.data.clamp_(-1, 1)
+        # ''' Gradiant Clipping '''
+        # """ +T TRUNCATION PRESENT """
+        # for param in self.qnetwork_local.parameters():
+        #     param.grad.data.clamp_(-1, 1)
 
         self.optimizer.step()
         
