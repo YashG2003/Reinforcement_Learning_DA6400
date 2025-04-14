@@ -21,7 +21,7 @@ import gymnasium as gym
 import numpy as np 
 import matplotlib.pyplot as plt
 import wandb
-from duel_dqn import Agent_DDQN, train_dueling_dqn
+from agents.duel_dqn import Agent_DDQN, train_dueling_dqn
 
     
 sweep_config = {

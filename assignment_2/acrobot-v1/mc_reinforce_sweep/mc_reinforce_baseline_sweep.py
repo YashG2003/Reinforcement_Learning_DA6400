@@ -21,7 +21,7 @@ import gymnasium as gym
 import numpy as np 
 import matplotlib.pyplot as plt
 import wandb
-from mc_reinforce import train_reinforce_with_baseline
+from agents.mc_reinforce import train_reinforce_with_baseline
 
 sweep_config = {
     
