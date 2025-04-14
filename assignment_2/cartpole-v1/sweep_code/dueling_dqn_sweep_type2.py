@@ -1,50 +1,33 @@
-import random
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from collections import namedtuple, deque
-import torch.optim as optim
-import datetime
 import gymnasium as gym
-from gym.wrappers.record_video import RecordVideo
-import glob
-import io
-import base64
-from IPython.display import HTML
-from pyvirtualdisplay import Display
-from IPython import display as ipythondisplay
-from PIL import Image
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import gymnasium as gym
 import numpy as np 
-import matplotlib.pyplot as plt
 import wandb
-from mc_reinforce import train_reinforce_with_baseline
+from agents.dueling_dqn import Agent_DDQN, train_dueling_dqn
 
+    
 sweep_config = {
     
-    'name' : 'MC_RF_with_bl_Cartpole_Higher',
+    'name' : 'DDQN_cartpole_type2',
     
-    "method": "grid",  # Bayesian Optimization
-    
+    "method": "bayes",  # Bayesian Optimization
     "metric": 
         {"name": "Final_Cumulative_Regret", 
          "goal": "minimize"},  # Optimize final score
         
     "parameters": {
-        
-        "lr": {'values': [0.01, 0.005,0.004,0.008,0.006]},
-        
-        "hidden_size": {
-            "values": [64,128]
-    },  
-}
-    
+        "lr": {'values': [1e-5, 5e-4, 1e-4]},
+        "epsilon_decay": {'values': [0.993, 0.995]},
+        "min_epsilon": {'values': [0.01, 0.02]},
+        "update_every": {'values': [10, 20, 40]},
+        "batch_size": {'values': [256, 512]}
+    }
 }
 
-device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+BUFFER_SIZE = int(1e6)  # replay buffer size
+GAMMA = 0.99            # discount factor
 
 
 def main():
@@ -53,30 +36,42 @@ def main():
     
     config = wandb.config 
     
-    run_name = f"RL_sweep_1_with_baseline_lr-{config.lr:0.4f}_hs_{config.hidden_size}"
+    run_name = f"type_2_alpha_{config.lr}_batch_size_{config.batch_size}_epsdec_{config.epsilon_decay}_mineps_{config.min_epsilon}"
 
     wandb.run.name = run_name
     wandb.run.save()
     
     # Defining the env
     env = gym.make('CartPole-v1', render_mode="rgb_array")
+    state_shape = env.observation_space.shape[0]
+    action_shape = env.action_space.n
+    optimal_return_per_episode = 500
     
     # Hyperparameters
     episodes = 1000
-    gamma = 0.99
-    
     lr = config.lr
-    hidden_size = config.hidden_size
+    epsilon_decay = config.epsilon_decay
+    min_epsilon = config.min_epsilon
+    update_every = config.update_every
+    batch_size = config.batch_size
+    eps_start = 1
     
+    # Update type 1
+    update_type = 'max'
+
     all_episodic_rewards = []
     all_episodic_regrets = []
     
-    no_runs = 5
+    no_runs = 3
     
     for run in range(no_runs):
         
-        episodic_rewards, episodic_regrets = train_reinforce_with_baseline(env, run, episodes, 
-                                                    gamma, lr, hidden_size, device,seed=42)
+        agent_DDQN = Agent_DDQN(state_shape,action_shape, update_type,
+                                device,lr,BUFFER_SIZE,batch_size,GAMMA,update_every)
+        
+        episodic_rewards, episodic_regrets = train_dueling_dqn(run,env,agent_DDQN,episodes, eps_start, 
+                                                               min_epsilon, epsilon_decay, 
+                                                               optimal_return_per_episode)
             
         all_episodic_rewards.append(episodic_rewards)
         all_episodic_regrets.append(episodic_regrets) 
@@ -105,5 +100,4 @@ def main():
 if __name__ == "__main__":
     
     sweep_id = wandb.sweep(sweep_config, project="rl_a2",entity="da6400_rl")
-    wandb.agent(sweep_id, function=main, count = 10)
-
+    wandb.agent(sweep_id, function=main, count= 10)

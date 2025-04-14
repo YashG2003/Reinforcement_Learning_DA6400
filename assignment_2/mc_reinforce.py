@@ -1,11 +1,8 @@
 import torch  
-import gym
 import numpy as np  
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torch.autograd import Variable
-import matplotlib.pyplot as plt
 
 
 # Define the Policy Network
@@ -50,7 +47,8 @@ def compute_returns(rewards, gamma):
         returns.insert(0, R)
     return returns    
 
-def train_reinforce(env, run, episodes, gamma, lr, hidden_size, device,seed=None):
+def train_reinforce(env, run, episodes, gamma, lr, hidden_size, device, optimal_return_per_episode=500, 
+                    seed=None):
     
     if seed is not None:
         set_seed_for_network(seed)
@@ -60,8 +58,6 @@ def train_reinforce(env, run, episodes, gamma, lr, hidden_size, device,seed=None
 
     episodic_rewards = []
     episodic_regrets = []
-
-    optimal_return_per_episode = 500  # Adjust based on env
 
     for episode in range(episodes):
         try:
@@ -111,13 +107,10 @@ def train_reinforce(env, run, episodes, gamma, lr, hidden_size, device,seed=None
         print(f"Run: {run+1}, Episode: {episode+1}/{episodes}, Return per episode: {reward_per_episode:.2f}")
 
     return episodic_rewards, episodic_regrets
-import torch
-import torch.nn.functional as F
-import torch.optim as optim
 
 
-def train_reinforce_with_baseline(env, run, episodes, gamma, lr,
-                                  hidden_size, device,seed=None):
+def train_reinforce_with_baseline(env, run, episodes, gamma, lr, hidden_size, device, 
+                                  optimal_return_per_episode=500, seed=None):
     
     if seed is not None:
         set_seed_for_network(seed)
@@ -130,8 +123,6 @@ def train_reinforce_with_baseline(env, run, episodes, gamma, lr,
 
     episodic_rewards = []
     episodic_regrets = []
-
-    optimal_return_per_episode = 500  # Update this based on the true optimal return of your env
 
     for episode in range(episodes):
         try:
@@ -192,7 +183,6 @@ def train_reinforce_with_baseline(env, run, episodes, gamma, lr,
 
         # Compute advantages and update policy
         advantages = targets - values.detach()
-        # advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
         log_probs_tensor = torch.stack(log_probs)
         policy_loss = -torch.sum(log_probs_tensor * advantages)
@@ -207,87 +197,3 @@ def train_reinforce_with_baseline(env, run, episodes, gamma, lr,
         print(f"Run: {run+1}, Episode: {episode+1}/{episodes}, Reward: {reward_per_episode:.2f}")
 
     return episodic_rewards, episodic_regrets
-
-
-
-
-# def train_reinforce_with_baseline(env, run, episodes, gamma, policy_lr, value_lr,
-#                                   hidden_size_policy, hidden_size_value, device):
-    
-#     policy = PolicyNetwork(env.observation_space.shape[0], env.action_space.n, hidden_size_policy).to(device)
-#     value_function = ValueNetwork(env.observation_space.shape[0], hidden_size_value).to(device)
-
-#     policy_optimizer = optim.Adam(policy.parameters(), lr=policy_lr)
-#     value_optimizer = optim.Adam(value_function.parameters(), lr=value_lr)
-
-#     episodic_rewards = []
-#     episodic_regrets = []
-
-#     optimal_return_per_episode = -100  # Adjust based on env
-
-#     for episode in range(episodes):
-#         try:
-#             state, _ = env.reset()
-#         except:
-#             state = env.reset()
-
-#         reward_per_episode = 0
-#         reward_per_step = []
-#         log_probs = []
-#         value_per_step = []
-#         done = False
-
-#         while not done:
-#             # Convert state to tensor on device for action selection
-#             state_tensor = torch.from_numpy(state).float().unsqueeze(0).to(device)
-
-#             # Select action using policy network
-#             probs = policy(state_tensor)
-#             m = torch.distributions.Categorical(probs)
-#             action = m.sample()
-#             log_prob = m.log_prob(action)
-
-#             next_state, reward, terminated, truncated, _ = env.step(action.item())
-
-#             next_state_tensor = torch.from_numpy(next_state).float().unsqueeze(0).to(device)
-
-#             current_value = value_function(state_tensor)
-#             next_value = value_function(next_state_tensor).detach()
-
-#             # TD(0) Target
-#             done_flag = float(terminated or truncated)
-#             target = reward + gamma * next_value * (1 - done_flag)
-#             value_loss = F.mse_loss(current_value, target)
-
-#             value_optimizer.zero_grad()
-#             value_loss.backward()
-#             value_optimizer.step()
-
-#             log_probs.append(log_prob)
-#             reward_per_step.append(reward)
-#             value_per_step.append(current_value.squeeze(0))  # shape: [1] → []
-
-#             reward_per_episode += reward
-#             state = next_state
-#             done = terminated or truncated
-
-#         # Compute and normalize returns
-#         returns = compute_returns(reward_per_step, gamma)
-#         returns = torch.tensor(returns).float().to(device)
-#         returns = (returns - returns.mean()) / (returns.std() + 1e-9)
-
-#         values = torch.stack(value_per_step)
-#         advantages = returns - values
-
-#         policy_loss = -torch.sum(torch.stack(log_probs) * advantages.detach())
-
-#         policy_optimizer.zero_grad()
-#         policy_loss.backward()
-#         policy_optimizer.step()
-
-#         episodic_rewards.append(reward_per_episode)
-#         episodic_regrets.append(optimal_return_per_episode - reward_per_episode)
-
-#         print(f"Run: {run+1}, Episode: {episode+1}/{episodes}, Reward: {reward_per_episode:.2f}")
-
-#     return episodic_rewards, episodic_regrets
