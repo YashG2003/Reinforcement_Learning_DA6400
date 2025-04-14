@@ -85,8 +85,8 @@ python -m mc_reinforce_sweep.mc_reinforce_baseline_sweep
 - `*training_reslts.pkl`: files having training results for best hyperparmaeters
 
 ### Acrobot-v1 Files
-- `duel_dqn.py`: Dueling DQN agent implementation for CartPole
-- `mc_reinforce.py`: MC Reinforce agent implementation for CartPole 
+- `duel_dqn.py`: Dueling DQN agent implementation for Acrobot
+- `mc_reinforce.py`: MC Reinforce agent implementation for Acrobot 
 - `sweep_code` files: to run W&B hyperparameter sweeps
 - `plotting.py`: Visualizes training results for both algorithms
 - `*best_config.pkl`: files having training results for best hyperparmaeters
