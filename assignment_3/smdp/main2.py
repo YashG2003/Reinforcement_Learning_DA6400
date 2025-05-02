@@ -1,7 +1,7 @@
 import gymnasium as gym
 from smdp_qlearning import SMDPQAgent
-from options import option_policy, OPTION_NAMES, decode_state
-from utils import plot_rewards, visualize_all_options
+from options2 import option_policy, OPTION_NAMES, decode_state
+from utils import plot_rewards, visualize_all_options_2
 
 def run_episode(env, agent):
     state, _ = env.reset()
@@ -20,7 +20,6 @@ def run_episode(env, agent):
             action = option_policy(env, option, state)
             if action is None:
                 break  # Option terminates
-            
             next_state, reward, terminated, truncated, _ = env.step(action)
             reward_sum += (agent.gamma ** option_steps) * reward
             steps += 1
@@ -51,8 +50,8 @@ def main():
         if (ep+1) % 10 == 0:
             print(f"Episode {ep+1}: Reward = {ep_reward}")
 
-    plot_rewards(rewards, filename = 'visualizations/returns_1.png')
-    visualize_all_options(agent.Q, env, option_policy, OPTION_NAMES, filename ='visualizations/Q_values_1.png')
+    plot_rewards(rewards, filename = 'visualizations/returns_2.png')
+    visualize_all_options_2(agent.Q, env, option_policy, OPTION_NAMES, filename ='visualizations/Q_values_2.png')
 
 if __name__ == "__main__":
     main()
