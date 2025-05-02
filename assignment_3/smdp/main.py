@@ -1,0 +1,57 @@
+import gymnasium as gym
+from smdp_qlearning import SMDPQAgent
+from options import option_policy, OPTION_NAMES, decode_state
+from utils import plot_rewards, plot_q_values
+
+def run_episode(env, agent):
+    state, _ = env.reset()
+    total_reward = 0
+    steps = 0
+    done = False
+
+    while not done:
+        option = agent.select_option(state)
+        option_steps = 0
+        reward_sum = 0
+        curr_state = state
+
+        # Execute the option until termination (beta)
+        while True:
+            action = option_policy(env, option, state)
+            if action is None:
+                break  # Option terminates
+            next_state, reward, terminated, truncated, _ = env.step(action)
+            reward_sum += (agent.gamma ** option_steps) * reward
+            steps += 1
+            option_steps += 1
+            total_reward += reward
+            state = next_state
+            done = terminated or truncated
+            if done:
+                break
+
+        # Update Q-value after option termination
+        agent.update(curr_state, option, reward_sum, state, option_steps)
+
+    return total_reward, steps
+
+def main():
+    env = gym.make("Taxi-v3")
+    n_states = env.observation_space.n
+    n_options = len(OPTION_NAMES)
+    agent = SMDPQAgent(n_states, n_options, alpha=0.1, gamma=0.9, epsilon=0.1)
+
+    episodes = 1000
+    rewards = []
+
+    for ep in range(episodes):
+        ep_reward, ep_steps = run_episode(env, agent)
+        rewards.append(ep_reward)
+        if (ep+1) % 100 == 0:
+            print(f"Episode {ep+1}: Reward = {ep_reward}")
+
+    plot_rewards(rewards)
+    plot_q_values(agent.Q)
+
+if __name__ == "__main__":
+    main()
