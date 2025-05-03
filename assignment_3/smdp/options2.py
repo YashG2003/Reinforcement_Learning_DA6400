@@ -5,7 +5,7 @@ import heapq
 # Constants for options
 PICKUP_OPTION, DROPOFF_OPTION = 0, 1
 OPTION_NAMES = ['Pickup', 'Dropoff']
-
+    
 # Locations of R, G, Y, B
 LOCATIONS = [(0, 0), (0, 4), (4, 0), (4, 3)]  # R, G, Y, B
 

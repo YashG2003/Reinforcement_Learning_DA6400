@@ -1,7 +1,9 @@
 import gymnasium as gym
 from smdp_qlearning import SMDPQAgent
 from options2 import option_policy, OPTION_NAMES, decode_state
-from utils import plot_rewards, visualize_all_options_2
+from utils import plot_rewards_2, visualize_all_options_2, visualize_best_options
+import os
+import numpy as np
 
 def run_episode(env, agent):
     state, _ = env.reset()
@@ -50,8 +52,22 @@ def main():
         if (ep+1) % 10 == 0:
             print(f"Episode {ep+1}: Reward = {ep_reward}")
 
-    plot_rewards(rewards, filename = 'visualizations/returns_2.png')
+    # Plot both raw rewards and moving average
+    plot_rewards_2(rewards, window=100)
+    
+    os.makedirs('visualizations', exist_ok=True)
+    
     visualize_all_options_2(agent.Q, env, option_policy, OPTION_NAMES, filename ='visualizations/Q_values_2.png')
+    
+    visualize_best_options(agent.Q, env, pass_idx=0, dest_idx=3, option_names=OPTION_NAMES, 
+                      filename='visualizations/best_options_passR_destB_2.png')
+    
+    visualize_best_options(agent.Q, env, pass_idx=4, dest_idx=2, option_names=OPTION_NAMES, 
+                      filename='visualizations/best_options_passinT_destY_2.png')
+    
+    # Calculate and print average reward over last 100 episodes
+    avg_reward = np.mean(rewards[-100:])
+    print(f"Average reward over last 100 episodes: {avg_reward}")
 
 if __name__ == "__main__":
     main()
