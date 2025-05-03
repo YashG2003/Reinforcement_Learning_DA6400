@@ -19,12 +19,12 @@ ACTION_ARROWS = {
 def plot_rewards_1(rewards, window=100):
     # Plot episodic rewards
     plt.figure(figsize=(10, 5))
-    plt.plot(rewards, label='Episodic Rewards')
+    plt.plot(rewards, label='Episodic Returns')
     plt.xlabel('Episode')
-    plt.ylabel('Total Reward')
-    plt.title('Intra Option Q learning Episodic Rewards')
+    plt.ylabel('Episodic Return')
+    plt.title('Intra Option Q learning Episodic Returns')
     plt.legend()
-    plt.savefig("visualizations/ioql_episodic_rewards_1.png")
+    plt.savefig("visualizations/ioql_episodic_returns_1.png")
     plt.close()
 
     # Compute moving average
@@ -37,22 +37,22 @@ def plot_rewards_1(rewards, window=100):
     plt.figure(figsize=(10, 5))
     plt.plot(moving_avg, color='orange', label=f'Moving Average (window={window})')
     plt.xlabel('Episode')
-    plt.ylabel('Average Reward')
-    plt.title(f'Intra Option Q learning Moving Average Rewards (window={window})')
+    plt.ylabel('Average Return')
+    plt.title(f'Intra Option Q learning Moving Average Returns (window={window})')
     plt.legend()
-    plt.savefig("visualizations/ioql_moving_avg_rewards_1.png")
+    plt.savefig("visualizations/ioql_moving_avg_returns_1.png")
     plt.close()
 
 
 def plot_rewards_2(rewards, window=100):
     # Plot episodic rewards
     plt.figure(figsize=(10, 5))
-    plt.plot(rewards, label='Episodic Rewards')
+    plt.plot(rewards, label='Episodic Returns')
     plt.xlabel('Episode')
-    plt.ylabel('Total Reward')
-    plt.title('Intra Option Q learning Episodic Rewards')
+    plt.ylabel('Episodic Return')
+    plt.title('Intra Option Q learning Episodic Returns')
     plt.legend()
-    plt.savefig("visualizations/ioql_episodic_rewards_2.png")
+    plt.savefig("visualizations/ioql_episodic_returns_2.png")
     plt.close()
 
     # Compute moving average
@@ -65,10 +65,10 @@ def plot_rewards_2(rewards, window=100):
     plt.figure(figsize=(10, 5))
     plt.plot(moving_avg, color='orange', label=f'Moving Average (window={window})')
     plt.xlabel('Episode')
-    plt.ylabel('Average Reward')
-    plt.title(f'Intra Option Q learning Moving Average Rewards (window={window})')
+    plt.ylabel('Average Return')
+    plt.title(f'Intra Option Q learning Moving Average Returns (window={window})')
     plt.legend()
-    plt.savefig("visualizations/ioql_moving_avg_rewards_2.png")
+    plt.savefig("visualizations/ioql_moving_avg_returns_2.png")
     plt.close()
 
 
